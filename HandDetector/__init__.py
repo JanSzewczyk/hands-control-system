@@ -1,8 +1,8 @@
-import math
-
 import cv2
 import mediapipe as mp
+from typing import List, Any, Tuple, Union
 
+from models.Hand import Hand
 from models.HandType import HandType
 
 
@@ -35,7 +35,7 @@ class HandDetector:
         self.landmarks_list = []
         self.results = None
 
-    def find_hands(self, img, draw=True, flip_type=True):
+    def find_hands(self, img, draw=True, flip_type=True) -> Union[Tuple[List[Hand], Any], List[Hand]]:
         """
         Find hands in a BGR image.
         :param img: Image to find the hands in.
@@ -45,20 +45,20 @@ class HandDetector:
         """
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(img_rgb)
-        all_hands = []
+        all_hands: List[Hand] = []
         h, w, c = img.shape
 
         if self.results.multi_hand_landmarks:
             for hand_info, hand_landmarks in zip(self.results.multi_handedness, self.results.multi_hand_landmarks):
-                hand = {}
+                hand = Hand()
                 hand_landmarks_list = []
 
                 x_list = []
                 y_list = []
 
-                for id, lm in enumerate(hand_landmarks.landmark):
-                    px, py = int(lm.x * w), int(lm.y * h)
-                    hand_landmarks_list.append([px, py])
+                for _, landmark in enumerate(hand_landmarks.landmark):
+                    px, py, pz = int(landmark.x * w), int(landmark.y * h), landmark.z
+                    hand_landmarks_list.append([px, py, pz])
                     x_list.append(px)
                     y_list.append(py)
 
@@ -69,65 +69,65 @@ class HandDetector:
                 border_box = x_min, y_min, box_width, box_height
                 center_x, center_y = border_box[0] + (border_box[2] // 2), border_box[1] + (border_box[3] // 2)
 
-                hand["landmarks"] = hand_landmarks_list
-                hand["border_box"] = border_box
-                hand["center"] = (center_x, center_y)
+                hand.landmarks = hand_landmarks_list
+                hand.border_box = border_box
+                hand.center = (center_x, center_y)
 
                 # set hand type
                 if hand_info.classification[0].label == "Right":
-                    hand["type"] = HandType.LEFT if flip_type else HandType.RIGHT
+                    hand.type = HandType.LEFT if flip_type else HandType.RIGHT
                 else:
-                    hand["type"] = HandType.RIGHT if flip_type else HandType.LEFT
+                    hand.type = HandType.RIGHT if flip_type else HandType.LEFT
 
                 all_hands.append(hand)
 
                 # Draw border box
                 if draw:
                     self.mp_draw.draw_landmarks(img, hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
-                    self.draw_border_box(img, border_box)
+                    img = self.draw_border_box(img, border_box)
 
         if draw:
             return all_hands, img
         else:
             return all_hands
 
-    def find_position(self, img, hand_no=0, draw=True):
+    # def find_position(self, img, hand_no=0, draw=True):
+    #
+    #     x_list = []
+    #     y_list = []
+    #     border_box = []
+    #     self.landmarks_list = []
+    #     if self.results.multi_hand_landmarks:
+    #         my_hand = self.results.multi_hand_landmarks[hand_no]
+    #         for landmark_id, lm in enumerate(my_hand.landmark):
+    #             h, w, c = img.shape
+    #             cx, cy = int(lm.x * w), int(lm.y * h)
+    #
+    #             x_list.append(cx)
+    #             y_list.append(cy)
+    #
+    #             self.landmarks_list.append([landmark_id, cx, cy])
+    #
+    #             if draw:
+    #                 cv2.circle(img, (cx, cy), 6, (255, 0, 0), cv2.FILLED)
+    #
+    #         x_min, x_max = min(x_list), max(x_list)
+    #         y_min, y_max = min(y_list), max(y_list)
+    #         border_box = x_min, y_min, x_max, y_max
+    #
+    #         if draw:
+    #             cv2.rectangle(img, (x_min - 20, y_min - 20), (x_max + 20, y_max + 20), (0, 255, 0), 2)
+    #
+    #     return self.landmarks_list, border_box
 
-        x_list = []
-        y_list = []
-        border_box = []
-        self.landmarks_list = []
-        if self.results.multi_hand_landmarks:
-            my_hand = self.results.multi_hand_landmarks[hand_no]
-            for id, lm in enumerate(my_hand.landmark):
-                h, w, c = img.shape
-                cx, cy = int(lm.x * w), int(lm.y * h)
-
-                x_list.append(cx)
-                y_list.append(cy)
-
-                self.landmarks_list.append([id, cx, cy])
-
-                if draw:
-                    cv2.circle(img, (cx, cy), 6, (255, 0, 0), cv2.FILLED)
-
-            x_min, x_max = min(x_list), max(x_list)
-            y_min, y_max = min(y_list), max(y_list)
-            border_box = x_min, y_min, x_max, y_max
-
-            if draw:
-                cv2.rectangle(img, (x_min - 20, y_min - 20), (x_max + 20, y_max + 20), (0, 255, 0), 2)
-
-        return self.landmarks_list, border_box
-
-    def get_fingers_up(self, hand):
+    def get_fingers_up(self, hand: Hand) -> List[int]:
         """
         Finds how many fingers are open and returns in a list.
         :param hand: Hand information.
         :return: List of which fingers are up.
         """
-        hand_type = hand["type"]
-        hand_landmarks = hand["landmarks"]
+        hand_type = hand.type
+        hand_landmarks = hand.landmarks
 
         fingers = []
         if self.results.multi_hand_landmarks:
@@ -144,31 +144,31 @@ class HandDetector:
                     fingers.append(0)
 
             # 4 Fingers
-            for id in range(1, 5):
-                if hand_landmarks[self.tip_ids[id]][1] < hand_landmarks[self.tip_ids[id] - 2][1]:
+            for finger_id in range(1, 5):
+                if hand_landmarks[self.tip_ids[finger_id]][1] < hand_landmarks[self.tip_ids[finger_id] - 2][1]:
                     fingers.append(1)
                 else:
                     fingers.append(0)
 
         return fingers
 
-    def find_distance(self, p1, p2, img, draw=True, r=15, t=3):
-        x1, y1 = self.landmarks_list[p1][1:]
-        x2, y2 = self.landmarks_list[p2][1:]
-        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
-
-        if draw:
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), t)
-            cv2.circle(img, (x1, y1), r, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (x2, y2), r, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (cx, cy), r, (255, 0, 255), cv2.FILLED)
-
-        length = math.hypot(x1 - x2, y1 - y2)
-
-        return length, img, [x1, y1, x2, y2, cx, cy]
+    # def find_distance(self, p1, p2, img, draw=True, r=15, t=3):
+    #     x1, y1 = self.landmarks_list[p1][1:]
+    #     x2, y2 = self.landmarks_list[p2][1:]
+    #     cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+    #
+    #     if draw:
+    #         cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), t)
+    #         cv2.circle(img, (x1, y1), r, (255, 0, 255), cv2.FILLED)
+    #         cv2.circle(img, (x2, y2), r, (255, 0, 255), cv2.FILLED)
+    #         cv2.circle(img, (cx, cy), r, (255, 0, 255), cv2.FILLED)
+    #
+    #     length = math.hypot(x1 - x2, y1 - y2)
+    #
+    #     return length, img, [x1, y1, x2, y2, cx, cy]
 
     @staticmethod
-    def draw_border_box(img, border_box):
+    def draw_border_box(img: Any, border_box: Tuple) -> Any:
         """
         Draw border in image.
         :param img: Image to draw the border box.
@@ -198,4 +198,5 @@ class HandDetector:
         # Bottom Right x1,y1
         cv2.line(img, (x1, y1), (x1 - length, y1), (240, 130, 0), thickness)
         cv2.line(img, (x1, y1), (x1, y1 - length), (240, 130, 0), thickness)
+
         return img
