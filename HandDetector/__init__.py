@@ -2,8 +2,7 @@ import cv2
 import mediapipe as mp
 from typing import List, Any, Tuple, Union
 
-from models.Hand import Hand
-from models.HandType import HandType
+from models import Hand, HandType
 
 
 class HandDetector:

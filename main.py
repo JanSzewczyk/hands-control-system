@@ -1,22 +1,24 @@
 import cv2
-import pyautogui
 import numpy as np
-import mouse
+import autopy
+from autopy.key import Code, Modifier
 
 import HandDetector as hd
 from FPS import FPS
-from models.HandType import HandType
+from models import HandType, ActionType
 
 ############################
 cam_width, cam_height = 1280, 720
-screen_width, screen_height = pyautogui.size()
+screen_width, screen_height = autopy.screen.size()
 frame_reduction = 150
 smoothening = 5
 
+print(autopy.screen.size())
 
 ############################
 
 def main():
+    last_action = ActionType.RESET
     detector = hd.HandDetector(max_num_hands=2)
 
     cap = cv2.VideoCapture(0)
@@ -35,7 +37,7 @@ def main():
             RIGHT hand 
             5th landmark on hand 
             """
-            print(hand.landmarks)
+            # print(last_action)
 
             if hand.type == HandType.RIGHT:
                 x1, y1, _ = hand.landmarks[5]
@@ -46,18 +48,26 @@ def main():
 
                 # mouse move
                 if right_fingers_up.count(1) == 5:
-                    mouse.move(screen_width - x3, y3)
+                    print(screen_width - x3, y3)
+                    autopy.mouse.move(screen_width - x3, y3)
+                    last_action = ActionType.RESET
 
                 # click if all fingers are down
                 if right_fingers_up.count(1) == 0:
-                    mouse.click()
+                    if last_action != ActionType.CLICK:
+                        last_action = ActionType.CLICK
+                        autopy.mouse.click()
+                        autopy.mouse.click()
+                        print('Action : ', ActionType.CLICK)
 
             if hand.type == HandType.LEFT:
                 left_fingers_up = detector.get_fingers_up(hand)
 
                 # click if all fingers are down
                 if left_fingers_up.count(1) == 0:
-                    pyautogui.hotkey('alt', 'left')
+                    autopy.key.tap(Code.LEFT_ARROW, [Modifier.ALT])
+                    # Najman's problem
+                    # pyautogui.hotkey('alt', 'left')
 
         _, img = fps_reader.update(img)
 
