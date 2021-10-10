@@ -9,3 +9,8 @@ __pycache__/
 env/
 venv/
 .idea/
+
+/.ipynb_checkpoints
+
+# Datasets
+hand_gesture_coords.csv

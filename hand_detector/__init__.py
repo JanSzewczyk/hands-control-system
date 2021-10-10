@@ -31,7 +31,6 @@ class HandDetector:
         self.mp_draw = mp.solutions.drawing_utils
 
         self.tip_ids = [4, 8, 12, 16, 20]
-        self.landmarks_list = []
         self.results = None
 
     def find_hands(self, img, draw=True, flip_type=True) -> Union[Tuple[List[Hand], Any], List[Hand]]:
