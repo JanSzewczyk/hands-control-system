@@ -4,12 +4,12 @@ import autopy
 from autopy.key import Code, Modifier
 import time
 
-import hand_detector as hd
+from hand_detector import HandDetector
+from camera_video_capture import CameraVideoCapture
 from fps import FPS
 from models import HandType, ActionType
 
 ############################
-cam_width, cam_height = 1280, 720
 screen_width, screen_height = autopy.screen.size()
 frame_reduction = 150
 smoothening = 7
@@ -18,17 +18,16 @@ print(f"SCREEN SIZE: {screen_width} X {screen_height} ")  # 1920.0 X 1080.0
 
 ############################
 
+
 def main():
     prev_location_x, prev_location_y = 0, 0
     curr_location_x, curr_location_y = 0, 0
     active_grab = False
 
     last_action = ActionType.RESET
-    detector = hd.HandDetector(max_num_hands=2)
+    detector = HandDetector(max_num_hands=2)
 
-    cap = cv2.VideoCapture(0)
-    cap.set(3, cam_width)
-    cap.set(4, cam_height)
+    cap = CameraVideoCapture()
 
     fps_reader = FPS()
 
@@ -47,14 +46,14 @@ def main():
             if hand.type == HandType.RIGHT:
                 right_fingers_up = detector.get_fingers_up(hand)
                 cv2.rectangle(img, (frame_reduction, frame_reduction),
-                              (cam_width - frame_reduction, cam_height - frame_reduction), (255, 0, 255), 1)
+                              (cap.cam_width - frame_reduction, cap.cam_height - frame_reduction), (255, 0, 255), 1)
 
                 # mouse move
                 # if right_fingers_up.count(1) == 5:
                 x1, y1, _ = hand.landmarks[5]
 
-                x3 = np.interp(x1, (frame_reduction, cam_width - frame_reduction), (0, screen_width))
-                y3 = np.interp(y1, (frame_reduction, cam_height - frame_reduction), (0, screen_height))
+                x3 = np.interp(x1, (frame_reduction, cap.cam_width - frame_reduction), (0, screen_width))
+                y3 = np.interp(y1, (frame_reduction, cap.cam_height - frame_reduction), (0, screen_height))
 
                 # Smoothen values
                 curr_location_x = prev_location_x + (x3 - prev_location_x) / smoothening

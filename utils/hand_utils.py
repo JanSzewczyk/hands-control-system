@@ -5,6 +5,17 @@ import matplotlib.pyplot as plt
 
 
 def prepare_hand_data(hand: Hand) -> List[List[int]]:
+    """
+    Function that calculates hand landmarks based on the frame area.
+    Scales Hand landmarks to ranges [0, 1].
+
+    Args:
+        hand: Hand information.
+
+    Returns:
+        List of processed hand landmarks.
+    """
+
     x_min, y_min, box_width, box_height = hand.border_box
     landmarks = []
 
@@ -18,6 +29,14 @@ def prepare_hand_data(hand: Hand) -> List[List[int]]:
 
 
 def draw_hand_gesture(landmarks) -> None:
+    """
+    A function that draws landmarks on a graph.
+
+    Args:
+        landmarks: Hand landmarks.
+
+    Returns:
+    """
     landmarks_connections = [
         (0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 8),
         (5, 9), (9, 10), (10, 11), (11, 12), (9, 13), (13, 14), (14, 15),
