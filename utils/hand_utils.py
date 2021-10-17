@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, AnyStr
 from models import Hand
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,14 +28,13 @@ def prepare_hand_data(hand: Hand) -> List[List[int]]:
     return landmarks
 
 
-def draw_hand_gesture(landmarks) -> None:
+def draw_hand_gesture(landmarks: List[List[float]], title: AnyStr) -> None:
     """
     A function that draws landmarks on a graph.
 
     Args:
         landmarks: Hand landmarks.
-
-    Returns:
+        title: Plot title.
     """
     landmarks_connections = [
         (0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 8),
@@ -52,8 +51,8 @@ def draw_hand_gesture(landmarks) -> None:
     for p_1, p_2 in landmarks_connections:
         plt.plot([x[p_1], x[p_2]], [y[p_1], y[p_2]], 'r')
 
+    plt.title(title)
     plt.scatter(x, y)
+
     for index, coord in enumerate(zip(x, y)):
         plt.text(coord[0], coord[1], index, color='blue')
-
-    plt.show()

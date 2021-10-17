@@ -34,3 +34,6 @@ class CameraVideoCapture:
 
     def release(self) -> None:
         self.cap.release()
+
+    def is_opened(self):
+        return self.cap.isOpened()
