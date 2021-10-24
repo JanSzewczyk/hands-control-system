@@ -9,6 +9,8 @@ from camera_video_capture import CameraVideoCapture
 from fps import FPS
 from models import HandType, ActionType
 
+from hand_gesture_detector import HandGestureDetector
+
 ############################
 screen_width, screen_height = autopy.screen.size()
 frame_reduction = 150
@@ -24,14 +26,16 @@ def main():
     curr_location_x, curr_location_y = 0, 0
     active_grab = False
 
-    last_action = ActionType.RESET
+    last_action = ActionType.NEUTRAL
     detector = HandDetector(max_num_hands=2)
+
+    hgd = HandGestureDetector()
 
     cap = CameraVideoCapture()
 
     fps_reader = FPS()
 
-    while True:
+    while cap.is_opened():
         success, img = cap.read()
         all_hands, img = detector.find_hands(img)
 
@@ -61,7 +65,8 @@ def main():
 
                 # using int remove error in 'autopy.mouse.move()'
                 autopy.mouse.move(int(screen_width - curr_location_x), int(curr_location_y))
-                last_action = ActionType.RESET
+
+                last_action = ActionType.NEUTRAL
 
                 prev_location_x, prev_location_y = curr_location_x, curr_location_y
 
@@ -69,7 +74,7 @@ def main():
                 if right_fingers_up == [0, 1, 1, 0, 0]:
                     autopy.mouse.click()
                     time.sleep(0.2)
-                    print('Action : ', ActionType.CLICK)
+                    # print('Action : ', ActionType.CLICK)
 
                 if right_fingers_up == [0, 0, 0, 0, 0]:
                     if active_grab:
@@ -79,7 +84,7 @@ def main():
 
                     time.sleep(0.3)
                     active_grab = not active_grab
-                    print('Action : ', ActionType.GRAB, active_grab)
+                    # print('Action : ', ActionType.GRAB, active_grab)
 
             if hand.type == HandType.LEFT:
                 left_fingers_up = detector.get_fingers_up(hand)

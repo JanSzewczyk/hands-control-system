@@ -18,4 +18,5 @@ hand_gesture_coords.csv
 data/
 
 # Classification model
-body_language.pkl
+hand-gestures-model.pkl
+*copy.pkl

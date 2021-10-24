@@ -9,4 +9,5 @@ class Hand:
     landmarks: List[List[int]] = field(init=False)
     border_box: Tuple[int, int, int, int] = field(init=False)
     center: Tuple[int] = field(init=False)
+    score: float = field(init=False)
     type: HandType = field(init=False)

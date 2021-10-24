@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 from typing import List, Any, Tuple, Union
 
+import utils.draw_utils as du
+
 from models import Hand, HandType
 
 
@@ -88,6 +90,7 @@ class HandDetector:
                 hand.landmarks = hand_landmarks_list
                 hand.border_box = border_box
                 hand.center = (center_x, center_y)
+                hand.score = hand_info.classification[0].score
 
                 # set hand type
                 if hand_info.classification[0].label == "Right":
@@ -100,7 +103,8 @@ class HandDetector:
                 # Draw border box
                 if draw:
                     self.mp_draw.draw_landmarks(img, hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
-                    img = self.draw_border_box(img, border_box)
+                    img = du.draw_border_box(img, border_box)
+                    img = du.draw_hand_info(img, hand)
 
         if draw:
             return all_hands, img
@@ -122,63 +126,26 @@ class HandDetector:
         hand_landmarks = hand.landmarks
 
         fingers = []
-        if self.results.multi_hand_landmarks:
-            # Thumb
-            if hand_type == HandType.RIGHT:
-                if hand_landmarks[self.tip_ids[0]][0] > hand_landmarks[self.tip_ids[0] - 1][0]:
-                    fingers.append(1)
-                else:
-                    fingers.append(0)
-            else:
-                if hand_landmarks[self.tip_ids[0]][0] < hand_landmarks[self.tip_ids[0] - 1][0]:
-                    fingers.append(1)
-                else:
-                    fingers.append(0)
 
-            # 4 Fingers
-            for finger_id in range(1, 5):
-                if hand_landmarks[self.tip_ids[finger_id]][1] < hand_landmarks[self.tip_ids[finger_id] - 2][1]:
-                    fingers.append(1)
-                else:
-                    fingers.append(0)
+        # Thumb
+        if hand_type == HandType.RIGHT:
+            if hand_landmarks[self.tip_ids[0]][0] > hand_landmarks[self.tip_ids[0] - 1][0]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+        else:
+            if hand_landmarks[self.tip_ids[0]][0] < hand_landmarks[self.tip_ids[0] - 1][0]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
+        # 4 Fingers
+        for finger_id in range(1, 5):
+            if hand_landmarks[self.tip_ids[finger_id]][1] < hand_landmarks[self.tip_ids[finger_id] - 2][1]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
 
         return fingers
 
-    @staticmethod
-    def draw_border_box(img: Any, border_box: Tuple) -> Any:
-        """
-        Draw border in image.
 
-        Args:
-            img: Image to draw the border box.
-            border_box: Dimensions and position of the border box.
-
-        Returns:
-            An image with a border box.
-        """
-
-        length = 30
-        thickness = 6
-        rectangle_thickness = 1
-
-        x, y, w, h = border_box
-        x1, y1 = x + w, y + h
-
-        cv2.rectangle(img, border_box, (255, 163, 51), rectangle_thickness)
-        # Top Left x,y
-        cv2.line(img, (x, y), (x + length, y), (240, 130, 0), thickness)
-        cv2.line(img, (x, y), (x, y + length), (240, 130, 0), thickness)
-
-        # Top Right x1,y
-        cv2.line(img, (x1, y), (x1 - length, y), (240, 130, 0), thickness)
-        cv2.line(img, (x1, y), (x1, y + length), (240, 130, 0), thickness)
-
-        # Bottom left x,y1
-        cv2.line(img, (x, y1), (x + length, y1), (240, 130, 0), thickness)
-        cv2.line(img, (x, y1), (x, y1 - length), (240, 130, 0), thickness)
-
-        # Bottom Right x1,y1
-        cv2.line(img, (x1, y1), (x1 - length, y1), (240, 130, 0), thickness)
-        cv2.line(img, (x1, y1), (x1, y1 - length), (240, 130, 0), thickness)
-
-        return img
