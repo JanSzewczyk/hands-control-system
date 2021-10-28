@@ -76,7 +76,7 @@ class HandsControlSystem:
             if detection_result.gesture_type == ActionType.GO_BACK:
                 self.mouse_control.go_back()
 
-    def __calculate_pointer_position(self, landmarks: List[List[int]]) -> Tuple[int, int]:
+    def __calculate_pointer_position(self, landmarks: List[List[float]]) -> Tuple[float, float]:
         x1, y1, _ = landmarks[self.index_of_pointer_landmark]
 
         x2 = np.interp(x1, (self.frame_reduction, self.cap.cam_width - self.frame_reduction),

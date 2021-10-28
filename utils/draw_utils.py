@@ -93,6 +93,10 @@ def draw_hand_info(img: Any, hand: Hand) -> Any:
 def draw_gesture_info(img: Any, gesture_clf: Optional[GestureClassificationResult],
                       border_box: Tuple[int, int, int, int]) -> Any:
     """
+    List the hand gesture predicted information in the picture in the higher left corner of the hand border box.
+    Information such as:
+        * gesture type name
+        * probability
 
     Args:
         img (Any): Image to list gesture information.
@@ -100,10 +104,9 @@ def draw_gesture_info(img: Any, gesture_clf: Optional[GestureClassificationResul
         border_box (Tuple[int, int, int, int]): Dimensions and position of the border box
 
     Returns:
-        Any: An image with
+        Any: An image with or without listed gesture information.
     """
 
-    #  TODO Google docstrings  https://gist.github.com/candlewill/fce04bb26d402288cd02f09bd4f5f562
     x, y, w, h = border_box
 
     if gesture_clf:

@@ -5,16 +5,16 @@ from typing import List, AnyStr
 from models import Hand
 
 
-def prepare_hand_data(hand: Hand) -> List[List[int]]:
+def prepare_hand_data(hand: Hand) -> List[List[float]]:
     """
     Function that calculates hand landmarks based on the frame area.
     Scales Hand landmarks to ranges [0, 1].
 
     Args:
-        hand: Hand information.
+        hand (Hand): Hand information.
 
     Returns:
-        List of processed hand landmarks.
+        (List[List[float]]): List of processed hand landmarks.
     """
 
     x_min, y_min, box_width, box_height = hand.border_box
@@ -34,8 +34,8 @@ def draw_hand_gesture(landmarks: List[List[float]], title: AnyStr) -> None:
     A function that draws landmarks on a graph.
 
     Args:
-        landmarks: Hand landmarks.
-        title: Plot title.
+        landmarks (List[List[float]]): Hand landmarks.
+        title (AnyStr): Plot title.
     """
     landmarks_connections = [
         (0, 1), (1, 2), (2, 3), (3, 4), (0, 5), (5, 6), (6, 7), (7, 8),
