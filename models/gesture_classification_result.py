@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 
-from models.HandType import HandType
+from models.gesture_type import GestureType
 
 
 @dataclass
 class GestureClassificationResult:
-    gesture_type: HandType = field(init=False)
+    gesture_type: GestureType = field(init=False)
     score: float = field(init=False)
 

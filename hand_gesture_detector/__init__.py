@@ -4,7 +4,7 @@ import numpy as np
 
 from typing import Optional, Any
 
-from models import Hand, GestureClassificationResult, ActionType
+from models import Hand, GestureClassificationResult, GestureType
 import utils.hand_utils as hu
 
 
@@ -65,7 +65,7 @@ class HandGestureDetector:
         hand_gesture_class = self._model.predict(predicted_data)[0]
         hand_gesture_prob = self._model.predict_proba(predicted_data)[0]
 
-        gesture_classification_result.gesture_type = ActionType(hand_gesture_class)
+        gesture_classification_result.gesture_type = GestureType(hand_gesture_class)
         gesture_classification_result.score = round(hand_gesture_prob[np.argmax(hand_gesture_prob)], 2)
 
         if gesture_classification_result.score < self._min_classification_confidence:

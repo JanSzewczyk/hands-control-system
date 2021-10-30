@@ -10,7 +10,7 @@ from fps import FPS
 
 import utils.draw_utils as du
 
-from models import HandType, Hand, ActionType
+from models import HandType, Hand, GestureType
 
 
 class HandsControlSystem:
@@ -65,15 +65,15 @@ class HandsControlSystem:
         # Check if the hand gesture has been classified
         if detection_result:
             # Left button mouse click
-            if detection_result.gesture_type == ActionType.CLICK:
+            if detection_result.gesture_type == GestureType.CLICK:
                 self.mouse_control.click()
 
             # Grab action
-            if detection_result.gesture_type == ActionType.GRAB:
+            if detection_result.gesture_type == GestureType.GRAB:
                 self.mouse_control.grab()
 
             # Go back action
-            if detection_result.gesture_type == ActionType.GO_BACK:
+            if detection_result.gesture_type == GestureType.GO_BACK:
                 self.mouse_control.go_back()
 
     def __calculate_pointer_position(self, landmarks: List[List[float]]) -> Tuple[float, float]:
@@ -89,9 +89,3 @@ class HandsControlSystem:
     def __left_hand_control(self, left_hand: Hand) -> None:
         # TODO to implement
         pass
-
-
-if __name__ == '__main__':
-    hcs = HandsControlSystem()
-
-    hcs.run()

@@ -1,8 +1,7 @@
 from enum import Enum
 
 
-# TODO change options/names
-class ActionType(Enum):
+class GestureType(Enum):
     NEUTRAL = 0
     CLICK = 1
     GRAB = 2

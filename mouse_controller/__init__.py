@@ -62,6 +62,10 @@ class MouseController:
         """
 
         autopy.mouse.click()
+
+        # Reset grab flag
+        self._reset_grab_action()
+
         time.sleep(0.2)
 
     def grab(self) -> None:
@@ -82,5 +86,14 @@ class MouseController:
         """
         An action imitating a keyboard shortcut LEFT_ARROW + ALT.
         """
+
         autopy.key.tap(Code.LEFT_ARROW, [Modifier.ALT])
         time.sleep(0.3)
+
+    def _reset_grab_action(self) -> None:
+        """
+        Reset grab flag if is active.
+        """
+
+        if self._active_grab:
+            self._active_grab = False
