@@ -2,9 +2,9 @@ import cv2
 import mediapipe as mp
 from typing import List, Any, Tuple, Union, NamedTuple, Optional
 
-import utils.draw_utils as du
+import hcs.utils.draw_utils as du
 
-from models import Hand, HandType
+from hcs.models import Hand, HandType
 
 
 class HandDetector:

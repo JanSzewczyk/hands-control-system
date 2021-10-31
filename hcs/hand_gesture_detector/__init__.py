@@ -4,8 +4,8 @@ import numpy as np
 
 from typing import Optional, Any
 
-from models import Hand, GestureClassificationResult, GestureType
-import utils.hand_utils as hu
+from hcs.models import Hand, GestureClassificationResult, GestureType
+import hcs.utils.hand_utils as hu
 
 
 class HandGestureDetector:
@@ -31,7 +31,7 @@ class HandGestureDetector:
         self._model: Optional[Any] = None
 
         # Load model from file
-        self.__load_classification_model('hand-gestures-model.pkl')
+        self.__load_classification_model('hcs/classification_model_file/hand-gestures-model.pkl')
 
     def __load_classification_model(self, file_location_path: str) -> None:
         """

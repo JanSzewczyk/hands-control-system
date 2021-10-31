@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from models.gesture_type import GestureType
+from hcs.models.gesture_type import GestureType
 
 
 @dataclass

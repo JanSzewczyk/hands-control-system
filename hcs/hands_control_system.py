@@ -2,15 +2,15 @@ import cv2
 import numpy as np
 from typing import List, Tuple, Any
 
-from hand_gesture_detector import HandGestureDetector
+from hcs.hand_gesture_detector import HandGestureDetector
 from camera_video_capture import CameraVideoCapture
-from hand_detector import HandDetector
-from mouse_controller import MouseController
-from fps import FPS
+from hcs.hand_detector import HandDetector
+from hcs.mouse_controller import MouseController
+from hcs.fps import FPS
 
-import utils.draw_utils as du
+import hcs.utils.draw_utils as du
 
-from models import HandType, Hand, GestureType
+from hcs.models import HandType, Hand, GestureType
 
 
 class HandsControlSystem:

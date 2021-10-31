@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from typing import List, AnyStr
-from models import Hand
+from hcs.models import Hand
 
 
 def prepare_hand_data(hand: Hand) -> List[List[float]]:
