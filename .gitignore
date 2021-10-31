@@ -13,10 +13,10 @@ venv/
 /.ipynb_checkpoints
 
 # Datasets
-hand_gesture_coords.csv
-*copy.csv
+/hand_gesture_coords.csv
+/*copy.csv
 data/
 
 # Classification model
-hand-gestures-model.pkl
-*copy.pkl
+/hand-gestures-model.pkl
+/*copy.pkl
