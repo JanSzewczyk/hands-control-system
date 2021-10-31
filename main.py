@@ -1,4 +1,4 @@
-from hands_control_system import HandsControlSystem
+from hcs import HandsControlSystem
 
 
 def main():

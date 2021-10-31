@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Tuple, NamedTuple
 
-from models.hand_type import HandType
+from hcs.models.hand_type import HandType
 
 
 class BorderBox(NamedTuple):

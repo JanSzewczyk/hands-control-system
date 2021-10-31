@@ -2,7 +2,7 @@ import cv2
 
 from typing import Any, Tuple, Optional
 
-from models import Hand, GestureClassificationResult
+from hcs.models import Hand, GestureClassificationResult
 
 
 def draw_bounding_box(img: Any, pt1: Tuple[int, int], pt2: Tuple[int, int]) -> Any:
