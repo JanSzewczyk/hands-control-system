@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class HandType(Enum):
-    LEFT = "LEFT"
-    RIGHT = "RIGHT"
+    LEFT = 0
+    RIGHT = 1
 

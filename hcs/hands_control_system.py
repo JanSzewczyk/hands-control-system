@@ -3,7 +3,7 @@ import numpy as np
 from typing import List, Tuple, Any
 
 from hcs.hand_gesture_detector import HandGestureDetector
-from camera_video_capture import CameraVideoCapture
+from hcs.camera_video_capture import CameraVideoCapture
 from hcs.hand_detector import HandDetector
 from hcs.mouse_controller import MouseController
 from hcs.fps import FPS
@@ -40,7 +40,7 @@ class HandsControlSystem:
                     self.__right_hand_control(img, hand)
 
                 if hand.type == HandType.LEFT:
-                    self.__left_hand_control(hand)
+                    self.__left_hand_control(img, hand)
 
             # Shop FPS
             _, img = self.fps_reader.update(img)
@@ -86,6 +86,14 @@ class HandsControlSystem:
 
         return x2, y2
 
-    def __left_hand_control(self, left_hand: Hand) -> None:
-        # TODO to implement
-        pass
+    def __left_hand_control(self, img: Any, left_hand: Hand) -> None:
+        detection_result = self.gesture_detector.predict(left_hand)
+
+        # Draw left hand detection info
+        du.draw_gesture_info(img, detection_result, left_hand.border_box)
+
+        # Check if the hand gesture has been classified
+        if detection_result:
+            # Left button mouse click
+            if detection_result.gesture_type == GestureType.GO_FORWARD:
+                self.mouse_control.go_forward()

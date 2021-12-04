@@ -90,6 +90,14 @@ class MouseController:
         autopy.key.tap(Code.LEFT_ARROW, [Modifier.ALT])
         time.sleep(0.3)
 
+    def go_forward(self) -> None:
+        """
+        An action imitating a keyboard shortcut RIGHT_ARROW + ALT.
+        """
+
+        autopy.key.tap(Code.RIGHT_ARROW, [Modifier.ALT])
+        time.sleep(0.3)
+
     def _reset_grab_action(self) -> None:
         """
         Reset grab flag if is active.
