@@ -90,6 +90,6 @@ class HandGestureDetector:
 
         # Flattening the list of hand landmarks
         row = list(np.array(landmarks).flatten())
-        row.insert(1, hand.type.value)
+        row.insert(0, hand.type.value)
 
         return pd.DataFrame([row])
